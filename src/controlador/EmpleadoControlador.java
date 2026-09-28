@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 
-/**
- * Controlador principal: realiza validaciones, maneja las reglas de negocio y las operaciones CRUD.
- */
 public class EmpleadoControlador {
 
     public static final String[] TIPOS_EMPLEADO = {"Operativo", "Administrativo", "Comercial"};

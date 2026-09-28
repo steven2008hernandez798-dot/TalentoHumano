@@ -9,8 +9,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 
+/**
+ * El "cerebro" del sistema: recibe lo que el usuario escribe en la ventana,
+ * lo valida y decide qué hacer con los datos.
+ */
 public class EmpleadoControlador {
 
+    // Array: lista FIJA de tipos de empleado
     public static final String[] TIPOS_EMPLEADO = {"Operativo", "Administrativo", "Comercial"};
 
     private final RepositorioEmpleado repositorio;
@@ -19,27 +24,9 @@ public class EmpleadoControlador {
     public EmpleadoControlador() {
         repositorio = new RepositorioEmpleado();
         historial = new ArrayList<>();
-        cargarDatosDePrueba();
     }
 
-    private void cargarDatosDePrueba() {
-        String[] cedulas = {"1001", "1002", "1003", "1004", "1005"};
-        String[] nombres = {"Ana Torres", "Luis Gómez", "Marta Ríos", "Pedro Cano", "Carlos Ruiz"};
-        double[] salarios = {1800000, 2500000, 1750000, 3200000, 2000000};
-
-        for (int i = 0; i < cedulas.length; i++) {
-            EmpleadoBase empleado;
-            if (i % 3 == 0) {
-                empleado = new EmpleadoBase(cedulas[i], nombres[i], salarios[i]);
-            } else if (i % 3 == 1) {
-                empleado = new EmpleadoAdministrativo(cedulas[i], nombres[i], salarios[i], 300000);
-            } else {
-                empleado = new EmpleadoComercial(cedulas[i], nombres[i], salarios[i], 15);
-            }
-            repositorio.agregar(empleado);
-        }
-    }
-
+    // Revisa carácter por carácter que el texto sea un número positivo válido
     private boolean esNumeroValido(String texto) {
         if (texto.isEmpty() || texto.equals(".")) {
             return false;
@@ -56,6 +43,7 @@ public class EmpleadoControlador {
         return puntos <= 1;
     }
 
+    // Devuelve un mensaje de error, o null si todo está correcto
     private String validar(String cedula, String nombre, String salario, String tipo, String bonificacion) {
         if (cedula.isEmpty() || nombre.isEmpty()) {
             return "La cédula y el nombre son obligatorios.";
@@ -79,6 +67,7 @@ public class EmpleadoControlador {
         return null;
     }
 
+    // Fábrica de empleados: decide qué clase instanciar según el tipo
     private EmpleadoBase construirEmpleado(String cedula, String nombre, String salario, String tipo, String bonificacion) {
         double salarioBase = Double.parseDouble(salario);
         if (tipo.equals("Administrativo")) {
@@ -91,6 +80,7 @@ public class EmpleadoControlador {
         return new EmpleadoBase(cedula, nombre, salarioBase);
     }
 
+    // OPERACIONES CRUD
     public String agregarEmpleado(String cedula, String nombre, String salario, String tipo, String bonificacion) {
         String error = validar(cedula, nombre, salario, tipo, bonificacion);
         if (error != null) {
@@ -136,6 +126,7 @@ public class EmpleadoControlador {
         return lista;
     }
 
+    // Polimorfismo en acción: cada empleado calcula SU propio salario total
     public double calcularTotalNomina() {
         double total = 0;
         for (EmpleadoBase empleado : repositorio.listarTodos()) {
